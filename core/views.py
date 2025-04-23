@@ -42,3 +42,49 @@ def login_view(request):
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
+
+
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Restaurant, Category, Dish
+from django.contrib import messages
+
+def restaurant_list(request):
+    restaurants = Restaurant.objects.all()
+    return render(request, 'restaurant_list.html', {'restaurants': restaurants})
+
+def restaurant_menu(request, restaurant_id):
+    restaurant = get_object_or_404(Restaurant, id=restaurant_id)
+    categories = restaurant.categories.prefetch_related('dishes').all()
+    return render(request, 'restaurant_menu.html', {'restaurant': restaurant, 'categories': categories})
+
+def add_to_cart(request, dish_id):
+    dish = get_object_or_404(Dish, id=dish_id)
+    cart = request.session.get('cart', {})
+
+    restaurant_id = str(dish.category.restaurant.id)
+    item = {
+        'dish_id': dish.id,
+        'name': dish.name,
+        'price': float(dish.price),
+        'grams': dish.grams,
+        'image': dish.image.url
+    }
+
+    if restaurant_id not in cart:
+        cart[restaurant_id] = []
+
+    cart[restaurant_id].append(item)
+    request.session['cart'] = cart
+    messages.success(request, f'{dish.name} добавлен в корзину!')
+    return redirect('restaurant_menu', restaurant_id=restaurant_id)
+
+def view_cart(request):
+    cart_data = request.session.get('cart', {})
+    cart = {}
+
+    for rest_id, items in cart_data.items():
+        restaurant = Restaurant.objects.get(id=rest_id)
+        cart[restaurant] = [{'dish': Dish.objects.get(id=item['dish_id'])} for item in items]
+
+    return render(request, 'cart.html', {'cart': cart})
