@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load tailwind_field crispy_forms_tags %}
+
+{% block content %}
+    <section class="bg-orange-50 py-16">
+        <div class="max-w-4xl mx-auto px-6">
+            <h2 class="text-4xl font-extrabold text-orange-600 mb-8 text-center">Регистрация нового пользователя</h2>
+            <form method="post" class="bg-white p-8 rounded-lg shadow-lg border border-gray-200">
+                {% csrf_token %}
+
+                <div class="mb-6">
+                    {% tailwind_field form.username "placeholder" "Имя пользователя" %}
+                </div>
+                <div class="mb-6">
+                    {% tailwind_field form.password "placeholder" "Пароль" %}
+                </div>
+                <div class="mb-6">
+                    {% tailwind_field form.confirm_password "placeholder" "Повторите пароль" %}
+                </div>
+
+                <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-6 rounded-lg shadow-md mt-4">
+                    Зарегистрироваться
+                </button>
+            </form>
+        </div>
+    </section>
+{% endblock %}

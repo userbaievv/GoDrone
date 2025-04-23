@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load tailwind_field %}
+
+{% block content %}
+    <section class="bg-orange-50 py-16">
+        <div class="max-w-4xl mx-auto px-6">
+            <h2 class="text-4xl font-extrabold text-orange-600 mb-8 text-center">Вход в аккаунт</h2>
+            <form method="post" class="bg-white p-8 rounded-lg shadow-lg border border-gray-200">
+                {% csrf_token %}
+
+                <div class="mb-6">
+                    {% tailwind_field form.username "placeholder" "Имя пользователя" %}
+                </div>
+                <div class="mb-6">
+                    {% tailwind_field form.password "placeholder" "Пароль" %}
+                </div>
+
+                <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 px-6 rounded-lg shadow-md mt-4">
+                    Войти
+                </button>
+            </form>
+            <p class="mt-6 text-center text-gray-600">
+                Еще нет аккаунта?
+                <a href="{% url 'register' %}" class="text-orange-500 hover:underline">Зарегистрироваться</a>
+            </p>
+        </div>
+    </section>
+{% endblock %}
